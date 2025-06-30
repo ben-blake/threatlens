@@ -24,3 +24,6 @@ crash.log
 
 # Editor/IDE
 .vscode/
+
+# Local files
+cheatsheet.txt
