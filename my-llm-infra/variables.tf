@@ -8,3 +8,8 @@ variable "gcp_region" {
   type        = string
   default     = "us-central1"
 }
+
+variable "my_ip_cidr" {
+  description = "Your IP address in CIDR notation (e.g., 123.45.67.89/32) for secure SSH access"
+  type        = string
+}

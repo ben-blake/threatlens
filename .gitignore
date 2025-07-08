@@ -27,3 +27,6 @@ crash.log
 
 # Local files
 cheatsheet.txt
+
+# Service account key
+service-account-key.json
