@@ -28,7 +28,7 @@ The application uses a cloud-native architecture with the following components:
 - **Web UI**: Flask-based interface for submitting logs and viewing analysis
 - **Cloud Run**: Hosts the containerized Flask application with auto-scaling
 - **Vertex AI**: Provides Gemini 2.0 Flash-Lite model for system log analysis
-- **VPC Network**: Isolated network environment for future integrations, e.g. VMs, databases, etc.
+- **VPC Network**: Isolated network environment for future integrations (e.g. VMs, databases, etc.)
 - **Artifact Registry**: Stores container images
 - **Monitoring & Logging**: Custom metrics, dashboard, and alerts
 
