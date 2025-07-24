@@ -18,7 +18,6 @@ crash.log
 *.fls
 *.synctex.gz
 *.pdf
-*.md
 
 # macOS
 .DS_Store
