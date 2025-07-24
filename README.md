@@ -27,7 +27,7 @@ The application uses a cloud-native architecture with the following components:
 
 - **Web UI**: Flask-based interface for submitting logs and viewing analysis
 - **Cloud Run**: Hosts the containerized Flask application with auto-scaling
-- **Vertex AI**: Provides Gemini 2.0 Flash-Lite model for security log analysis
+- **Vertex AI**: Provides Gemini 2.0 Flash-Lite model for system log analysis
 - **VPC Network**: Isolated network environment for future integrations, e.g. VMs, databases, etc.
 - **Artifact Registry**: Stores container images
 - **Monitoring & Logging**: Custom metrics, dashboard, and alerts
@@ -125,7 +125,7 @@ Terraform will handle:
 ## Usage
 
 1. Access the dashboard at the URL provided after deployment
-2. Enter a security log entry in the text area (or select from examples)
+2. Enter a system log entry in the text area (or select from examples)
 3. Click "Analyze" to process the log
 4. View the analysis results with:
    - Threat Classification
