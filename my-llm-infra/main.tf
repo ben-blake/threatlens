@@ -144,7 +144,7 @@ resource "null_resource" "docker_build_and_push" {
 
 # Create a custom IAM role with least privileges required for the LLM service
 resource "google_project_iam_custom_role" "llm_service_role" {
-  role_id     = "llmServiceMinimalRole"
+  role_id     = "llmServiceMinRole2025" # Changed to avoid deletion conflict
   title       = "LLM Service Minimal Role"
   description = "Custom role with minimal permissions for LLM inference service"
   permissions = [
@@ -170,44 +170,87 @@ resource "google_project_iam_binding" "llm_service_role_binding" {
   ]
 }
 
+# IAM Role Assignment - Add the required Vertex AI roles directly in Terraform
+resource "google_project_iam_member" "vertex_ai_user" {
+  project = var.gcp_project_id
+  role    = "roles/aiplatform.user"
+  member  = "serviceAccount:${google_service_account.llm_service_account.email}"
+
+  depends_on = [google_service_account.llm_service_account]
+}
+
+resource "google_project_iam_member" "vertex_ai_model_user" {
+  project = var.gcp_project_id
+  role    = "roles/aiplatform.modelUser"
+  member  = "serviceAccount:${google_service_account.llm_service_account.email}"
+
+  depends_on = [google_service_account.llm_service_account]
+}
+
+resource "google_project_iam_member" "service_usage_consumer" {
+  project = var.gcp_project_id
+  role    = "roles/serviceusage.serviceUsageConsumer"
+  member  = "serviceAccount:${google_service_account.llm_service_account.email}"
+
+  depends_on = [google_service_account.llm_service_account]
+}
+
 # Deploy the application to Cloud Run
 resource "google_cloud_run_v2_service" "llm_service" {
   name     = "llm-inference-service"
   location = var.gcp_region
-  project  = var.gcp_project_id
+  ingress  = "INGRESS_TRAFFIC_ALL"
 
   template {
-    labels = {
-      # This label changes when the code changes, forcing a new revision.
-      "source_code_hash" = null_resource.docker_build_and_push.triggers.source_code_hash
-    }
-    service_account = google_service_account.llm_service_account.email
     containers {
-      image = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/${google_artifact_registry_repository.llm_app_repo.repository_id}/llm-app:v1"
-      ports {
-        container_port = 8080
+      # Use the image from the artifact registry that was created by the null_resource
+      image = "us-central1-docker.pkg.dev/${var.gcp_project_id}/llm-app-repo/llm-app:v1"
+      
+      resources {
+        limits = {
+          cpu    = "1000m"
+          memory = "512Mi"
+        }
       }
+
       env {
         name  = "GCP_PROJECT"
         value = var.gcp_project_id
       }
+      
       env {
         name  = "GCP_REGION"
         value = var.gcp_region
       }
+      
+      # Add startup probe to give the application more time to initialize
+      startup_probe {
+        http_get {
+          path = "/health"
+        }
+        initial_delay_seconds = 10
+        timeout_seconds = 3
+        period_seconds = 5
+        failure_threshold = 12  # Allow up to 60 seconds for startup
+      }
     }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 20
+    }
+
+    service_account = google_service_account.llm_service_account.email
   }
 
-  depends_on = [
-    null_resource.docker_build_and_push,
-    google_project_service.run_api,
-    google_project_service.aiplatform_api
-  ]
-  
-  # This ensures the service and its dependencies are destroyed in the right order
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [
+    google_project_service.run_api,
+    null_resource.docker_build_and_push
+  ]
 }
 
 # Allow unauthenticated access to the Cloud Run service
@@ -258,23 +301,6 @@ resource "google_logging_metric" "model_errors" {
     metric_kind = "DELTA"
     value_type  = "INT64"
     display_name = "LLM Model Errors"
-  }
-  depends_on = [google_project_service.logging_api]
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# Log-based metric for counting HTTP errors
-resource "google_logging_metric" "http_errors" {
-  name        = "http-errors"
-  filter      = "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"llm-inference-service\" AND httpRequest.status >= 400"
-  description = "Counts the number of HTTP errors (4xx and 5xx responses)"
-  metric_descriptor {
-    metric_kind = "DELTA"
-    value_type  = "INT64"
-    display_name = "LLM HTTP Errors"
   }
   depends_on = [google_project_service.logging_api]
   
@@ -390,29 +416,6 @@ resource "google_monitoring_dashboard" "llm_dashboard" {
               "timeSeriesQuery": {
                 "timeSeriesFilter": {
                   "filter": "metric.type=\"logging.googleapis.com/user/model-errors\"",
-                  "aggregation": {
-                    "alignmentPeriod": "60s",
-                    "perSeriesAligner": "ALIGN_RATE"
-                  }
-                }
-              },
-              "plotType": "LINE"
-            }
-          ],
-          "yAxis": {
-            "scale": "LINEAR",
-            "label": "Errors per second"
-          }
-        }
-      },
-      {
-        "title": "HTTP Errors",
-        "xyChart": {
-          "dataSets": [
-            {
-              "timeSeriesQuery": {
-                "timeSeriesFilter": {
-                  "filter": "metric.type=\"logging.googleapis.com/user/http-errors\"",
                   "aggregation": {
                     "alignmentPeriod": "60s",
                     "perSeriesAligner": "ALIGN_RATE"

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log Analysis Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/custom.css') }}"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding-top: 2rem;
+        background-color: #f8f9fa;
+      }
+      .analysis-card {
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #0d6efd;
+      }
+      .risk-score {
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+      }
+      .risk-low {
+        background-color: #d1e7dd;
+        color: #0f5132;
+      }
+      .risk-medium {
+        background-color: #fff3cd;
+        color: #664d03;
+      }
+      .risk-high {
+        background-color: #f8d7da;
+        color: #842029;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="pb-3 mb-4 border-bottom">
+        <div class="d-flex align-items-center">
+          <span class="logo-icon">🔍</span>
+          <div>
+            <h1 class="display-5">Log Analysis Dashboard</h1>
+            <p class="header-subtitle text-muted">
+              Powered by Gemini 2.0 Flash-Lite
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h2 class="card-title h5">Log Entry Analysis</h2>
+            </div>
+            <div class="card-body">
+              <form action="/analyze" method="post">
+                <div class="mb-3">
+                  <label for="log_entry" class="form-label"
+                    >Enter security log entry:</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="log_entry"
+                    name="log_entry"
+                    rows="4"
+                    placeholder="Example: sshd[1234]: Failed password for invalid user admin from 123.45.67.89 port 22 ssh2"
+                  >
+{{ log_entry or '' }}</textarea
+                  >
+                </div>
+                <button type="submit" class="btn btn-primary">Analyze</button>
+              </form>
+
+              {% if error %}
+              <div class="alert alert-danger mt-3" role="alert">
+                {{ error }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title h5">Analysis Results</h2>
+            </div>
+            <div class="card-body">
+              {% if current_analysis and current_analysis.analysis %}
+              <div class="formatted-analysis">
+                <!-- Store the raw analysis in a hidden element for JavaScript to access -->
+                <script>
+                  window.rawAnalysisText = `{{ current_analysis.analysis | safe }}`;
+                </script>
+                <!-- Initial display of raw text (will be replaced by JS) -->
+                <div class="loading">Processing analysis...</div>
+              </div>
+              {% else %}
+              <p class="text-muted text-center my-4">
+                Submit a log entry to view analysis
+              </p>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- <div class="card mt-3">
+            <div class="card-header">
+              <h2 class="card-title h5">API Usage</h2>
+            </div>
+            <div class="card-body">
+              <p>You can also access the analysis API programmatically:</p>
+              <pre class="bg-light p-2"><code>curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"log_entry": "your log entry"}' \
+{{ request.host_url }}api</code></pre>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <footer class="pt-3 mt-4 text-muted border-top text-center">
+        <small
+          >&copy; 2025 Ben Blake - COMP-SCI 5525 Cloud Computing Project</small
+        >
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Enable console output visibility for debugging
+      console.log('Dashboard loaded at ' + new Date().toISOString());
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>

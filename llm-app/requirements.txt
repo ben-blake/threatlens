@@ -1,3 +1,8 @@
-Flask==3.0.3
-gunicorn==22.0.0
-google-cloud-aiplatform==1.56.0 
+# Core dependencies
+Flask==2.2.5                 # Web framework
+gunicorn==21.2.0             # Production WSGI server
+google-cloud-aiplatform>=1.44.0  # Vertex AI SDK
+vertexai>=0.5.0              # Gemini model access
+
+# Compatibility requirements
+protobuf>=3.20.0,<5.0.0dev   # Required for Google Cloud libraries 

@@ -18,15 +18,20 @@ crash.log
 *.fls
 *.synctex.gz
 *.pdf
+*.md
 
 # macOS
 .DS_Store
 
 # Editor/IDE
 .vscode/
+ben-blake-llm-project-2025.code-workspace
 
 # Local files
 cheatsheet.txt
 
 # Service account key
 service-account-key.json
+
+# deliverables
+deliverables/

@@ -1,0 +1,112 @@
+/* Custom styles for the Log Analysis Dashboard */
+
+/* Header styles */
+header {
+  padding: 2rem 0 1.5rem;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+  color: #0d6efd;
+}
+
+.header-subtitle {
+  margin-bottom: 0;
+}
+
+/* Analysis card styles */
+.analysis-card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Risk score indicator */
+.risk-score {
+  font-size: 1.75rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  line-height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.risk-low {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.risk-medium {
+  background-color: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+}
+
+.risk-high {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+/* Analysis sections */
+.analysis-section {
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid #f8f9fa;
+}
+
+.threat-classification,
+.risk-score-label,
+.summary-label {
+  color: #0d6efd;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.summary-text {
+  color: #495057;
+}
+
+/* Example logs */
+.example-logs {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.example-logs button {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Animation for newly loaded content */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading state */
+.loading {
+  padding: 1rem;
+  text-align: center;
+  color: #6c757d;
+}
