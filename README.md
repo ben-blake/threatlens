@@ -28,7 +28,7 @@ The application uses a cloud-native architecture with the following components:
 - **Web UI**: Flask-based interface for submitting logs and viewing analysis
 - **Cloud Run**: Hosts the containerized Flask application with auto-scaling
 - **Vertex AI**: Provides Gemini 2.0 Flash-Lite model for security log analysis
-- **VPC Network**: Isolated network environment with security controls
+- **VPC Network**: Isolated network environment for future integrations, e.g. VMs, databases, etc.
 - **Artifact Registry**: Stores container images
 - **Monitoring & Logging**: Custom metrics, dashboard, and alerts
 
@@ -160,10 +160,6 @@ Actual costs for this project were approximately $0.12 total ($0.11 for Cloud Ru
 - **Application errors**: Check Cloud Run logs with:
   ```bash
   gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=llm-inference-service"
-  ```
-- **Permission issues**: Verify the service account has the required permissions:
-  ```bash
-  gcloud iam roles describe llmServiceMinRole2025 --project=ben-blake-llm-project-2025
   ```
 
 ## License
