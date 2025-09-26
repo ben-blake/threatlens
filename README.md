@@ -1,4 +1,4 @@
-# ThreatLens: LLM-Based Log Analysis Dashboard
+# LLM-Based Log Analysis Dashboard
 
 A cloud-native application for analyzing system logs using Google's Gemini 2.0 Flash-Lite LLM. This project deploys a web dashboard and API for threat intelligence analysis to Google Cloud Run.
 
